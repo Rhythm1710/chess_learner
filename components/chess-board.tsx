@@ -33,12 +33,16 @@ export function ChessBoard({
   selected,
   onSelect,
   onMove,
+  size = "md",
+  interactive = true,
 }: {
   fen: string;
   marks: BoardMarks | null;
   selected: string | null;
   onSelect: (square: string | null) => void;
   onMove: (from: string, to: string) => void;
+  size?: "md" | "xs";
+  interactive?: boolean;
 }) {
   const drag = useRef<DragState | null>(null);
   const [ghost, setGhost] = useState<{ id: string; x: number; y: number } | null>(null);
@@ -48,6 +52,7 @@ export function ChessBoard({
   const squares = squaresInDisplayOrder();
 
   function tap(square: string) {
+    if (!interactive) return;
     const piece = pieces.get(square) ?? null;
     if (selected && destinations.includes(square)) {
       onMove(selected, square);
@@ -61,6 +66,7 @@ export function ChessBoard({
   }
 
   function pointerDown(event: BoardPointer, square: string) {
+    if (!interactive) return;
     const piece = pieces.get(square) ?? null;
     if (!piece || piece.color !== turn) return;
     event.currentTarget.setPointerCapture(event.pointerId);
@@ -113,7 +119,7 @@ export function ChessBoard({
 
   return (
     <>
-      <div className="board md" role="group" aria-label="Practice board">
+      <div className={`board ${size}`} role="group" aria-label="Chess board">
         {Array.from({ length: 8 }, (_, row) => {
           const rank = 8 - row;
           const rowSquares = squares.slice(row * 8, row * 8 + 8);
@@ -125,7 +131,7 @@ export function ChessBoard({
               pieces={pieces}
               marks={marks}
               selected={selected}
-              destinations={destinations}
+              destinations={interactive ? destinations : []}
               onPointerDown={pointerDown}
               onPointerMove={pointerMove}
               onPointerUp={pointerUp}
