@@ -10,6 +10,7 @@ import {
   squaresInDisplayOrder,
   type BoardPiece,
 } from "@/lib/game";
+import { finishPointerDrag } from "@/lib/pointer-drag";
 
 export interface BoardMarks {
   hi: string[];
@@ -87,10 +88,12 @@ export function ChessBoard({
     }
   }
 
-  function pointerUp(event: BoardPointer, square: string) {
-    const current = drag.current;
-    drag.current = null;
+  function hideGhost() {
     setGhost(null);
+  }
+
+  function pointerUp(event: BoardPointer, square: string) {
+    const current = finishPointerDrag(drag, hideGhost, false);
     if (!current) {
       tap(square);
       return;
@@ -111,6 +114,10 @@ export function ChessBoard({
     tap(current.from);
   }
 
+  function pointerCancel() {
+    finishPointerDrag(drag, hideGhost, true);
+  }
+
   return (
     <>
       <div className="board md" role="group" aria-label="Practice board">
@@ -129,6 +136,7 @@ export function ChessBoard({
               onPointerDown={pointerDown}
               onPointerMove={pointerMove}
               onPointerUp={pointerUp}
+              onPointerCancel={pointerCancel}
             />
           );
         })}
@@ -158,6 +166,7 @@ function Rank({
   onPointerDown,
   onPointerMove,
   onPointerUp,
+  onPointerCancel,
 }: {
   rank: number;
   squares: string[];
@@ -168,6 +177,7 @@ function Rank({
   onPointerDown: (event: BoardPointer, square: string) => void;
   onPointerMove: (event: BoardPointer) => void;
   onPointerUp: (event: BoardPointer, square: string) => void;
+  onPointerCancel: () => void;
 }) {
   return (
     <>
@@ -200,6 +210,8 @@ function Rank({
             onPointerDown={(event) => onPointerDown(event, square)}
             onPointerMove={onPointerMove}
             onPointerUp={(event) => onPointerUp(event, square)}
+            onPointerCancel={onPointerCancel}
+            onLostPointerCapture={onPointerCancel}
           >
             {piece ? <Piece id={`${piece.color}${piece.type}`} /> : null}
           </button>
