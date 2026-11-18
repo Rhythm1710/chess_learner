@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ChessBoard } from "@/components/chess-board";
 import { ExampleEvalGraph, MaterialGraph } from "@/components/eval-graph";
 import { ExampleBadge } from "@/components/screen-header";
+import { useProgress } from "@/components/use-progress";
 import { materialScores, parsePgn, type ParsedGame } from "@/lib/pgn";
 
 const DIAGRAM_FEN =
@@ -28,11 +29,24 @@ export const EXAMPLE_PGN = `[Event "Example"]
 25. Be2 Qd6 26. Nf5`;
 
 export function AnalysisScreen() {
+  const { progress, write } = useProgress();
   const [game, setGame] = useState<ParsedGame | null>(null);
   const [ply, setPly] = useState(0);
   const [pasteOpen, setPasteOpen] = useState(false);
   const [draft, setDraft] = useState(EXAMPLE_PGN);
   const [error, setError] = useState<string | null>(null);
+  const [appliedKey, setAppliedKey] = useState("");
+  const saved = progress.analysis;
+  const savedKey = saved ? `${saved.ply}\n${saved.pgn}` : "";
+  if (saved && savedKey !== appliedKey) {
+    const parsed = parsePgn(saved.pgn);
+    setAppliedKey(savedKey);
+    if (parsed) {
+      setGame(parsed);
+      setPly(Math.max(0, Math.min(saved.ply, parsed.fens.length - 1)));
+      setDraft(saved.pgn);
+    }
+  }
   const onDiagram = game === null;
   const fen = onDiagram ? DIAGRAM_FEN : (game.fens[ply] ?? DIAGRAM_FEN);
   const san = onDiagram || ply === 0 ? null : game.sans[ply - 1];
@@ -47,10 +61,13 @@ export function AnalysisScreen() {
       setError("That PGN could not be read.");
       return;
     }
+    const nextPly = Math.max(0, Math.min(startPly, parsed.fens.length - 1));
     setGame(parsed);
-    setPly(Math.max(0, Math.min(startPly, parsed.fens.length - 1)));
+    setPly(nextPly);
+    setDraft(source);
     setError(null);
     setPasteOpen(false);
+    write((current) => ({ ...current, analysis: { pgn: source, ply: nextPly } }));
   }
 
   function step(delta: number) {
@@ -58,7 +75,11 @@ export function AnalysisScreen() {
       if (delta > 0) load(EXAMPLE_PGN, 1);
       return;
     }
-    setPly((current) => Math.max(0, Math.min(game.fens.length - 1, current + delta)));
+    const next = Math.max(0, Math.min(game.fens.length - 1, ply + delta));
+    setPly(next);
+    write((current) =>
+      current.analysis ? { ...current, analysis: { ...current.analysis, ply: next } } : current,
+    );
   }
 
   return (

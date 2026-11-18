@@ -4,7 +4,8 @@ import { useState } from "react";
 import { ChessBoard, type BoardMarks } from "@/components/chess-board";
 import { Piece } from "@/components/piece";
 import { ExampleBadge } from "@/components/screen-header";
-import { DRILLS, OPENING_DRILL_INDEX, type Drill } from "@/lib/drills";
+import { useProgress } from "@/components/use-progress";
+import { DRILLS, type Drill } from "@/lib/drills";
 import { needsPromotion, playMove, sideToMove, type Promotion } from "@/lib/game";
 
 const PROMOTION_LABELS: Record<Promotion, string> = {
@@ -15,7 +16,8 @@ const PROMOTION_LABELS: Record<Promotion, string> = {
 };
 
 export function PracticeScreen() {
-  const [index, setIndex] = useState(OPENING_DRILL_INDEX);
+  const { progress, write } = useProgress();
+  const index = progress.practice.drillIndex;
   const drill = DRILLS[index] ?? DRILLS[0];
   const [fen, setFen] = useState(drill.fen);
   const [selected, setSelected] = useState<string | null>(null);
@@ -26,20 +28,25 @@ export function PracticeScreen() {
   );
   const [wrongSan, setWrongSan] = useState<string | null>(null);
   const [hint, setHint] = useState(false);
-  const [streak, setStreak] = useState(6);
-  const [solvedToday, setSolvedToday] = useState(4);
-  const [solvedIds, setSolvedIds] = useState<string[]>([]);
+  const [boardIndex, setBoardIndex] = useState(index);
 
-  function load(nextIndex: number) {
-    const next = DRILLS[nextIndex] ?? DRILLS[0];
-    setIndex(nextIndex);
-    setFen(next.fen);
+  if (boardIndex !== index) {
+    setBoardIndex(index);
+    setFen(drill.fen);
     setSelected(null);
     setPending(null);
-    setMarks(next.openingMarks ?? null);
-    setPhase(next.showOpeningFeedback ? "opening" : null);
+    setMarks(drill.openingMarks ?? null);
+    setPhase(drill.showOpeningFeedback ? "opening" : null);
     setWrongSan(null);
     setHint(false);
+  }
+
+  function load(nextIndex: number) {
+    const wrapped = (nextIndex + DRILLS.length) % DRILLS.length;
+    write((current) => ({
+      ...current,
+      practice: { ...current.practice, drillIndex: wrapped },
+    }));
   }
 
   function finishCorrect(nextFen: string, drillId: string) {
@@ -49,11 +56,18 @@ export function PracticeScreen() {
     setMarks(null);
     setPhase("ok");
     setHint(false);
-    if (!solvedIds.includes(drillId)) {
-      setSolvedIds((current) => [...current, drillId]);
-      setStreak((current) => current + 1);
-      setSolvedToday((current) => Math.min(10, current + 1));
-    }
+    write((current) => {
+      if (current.practice.solvedIds.includes(drillId)) return current;
+      return {
+        ...current,
+        practice: {
+          ...current.practice,
+          solvedIds: [...current.practice.solvedIds, drillId],
+          streak: current.practice.streak + 1,
+          solvedToday: Math.min(10, current.practice.solvedToday + 1),
+        },
+      };
+    });
   }
 
   function commit(from: string, to: string, promotion?: Promotion) {
@@ -139,12 +153,12 @@ export function PracticeScreen() {
             <div className="card streak-card">
               <div>
                 <div className="kicker">Streak</div>
-                <div className="streak-num">{streak}</div>
+                <div className="streak-num">{progress.practice.streak}</div>
               </div>
               <div className="streak-rule" />
               <div>
                 <div className="kicker">Today</div>
-                <div className="today-num">{solvedToday} / 10</div>
+                <div className="today-num">{progress.practice.solvedToday} / 10</div>
               </div>
             </div>
           </div>
