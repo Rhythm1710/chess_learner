@@ -43,6 +43,22 @@ describe("move wrappers", () => {
     expect(playMove(fen, "a7", "a8", "q")?.san).toBe("a8=Q+");
   });
 
+  it("castles on the king side and the queen side", () => {
+    const fen = "r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1";
+    expect(playMove(fen, "e1", "g1")?.san).toBe("O-O");
+    expect(playMove(fen, "e1", "c1")?.san).toBe("O-O-O");
+    expect(pieceAt(playMove(fen, "e1", "g1")!.fen, "g1")?.type).toBe("k");
+    expect(pieceAt(playMove(fen, "e1", "g1")!.fen, "f1")?.type).toBe("r");
+  });
+
+  it("captures en passant", () => {
+    const fen = "rnbqkbnr/ppp1pppp/8/3pP3/8/8/PPPP1PPP/RNBQKBNR w KQkq d6 0 3";
+    const played = playMove(fen, "e5", "d6");
+    expect(played?.san).toBe("exd6");
+    expect(pieceAt(played!.fen, "d6")?.type).toBe("p");
+    expect(pieceAt(played!.fen, "d5")).toBeNull();
+  });
+
   it("recognises a mating move", () => {
     const fen = "6k1/5ppp/8/8/8/8/8/R5K1 w - - 0 1";
     const played = playMove(fen, "a1", "a8");

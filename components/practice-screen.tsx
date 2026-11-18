@@ -79,6 +79,13 @@ export function PracticeScreen() {
     });
   }
 
+  function selectSquare(square: string | null) {
+    setSelected(square);
+    if (square && pending && square !== pending.from) {
+      setPending(null);
+    }
+  }
+
   function onMove(from: string, to: string) {
     if (needsPromotion(fen, from, to)) {
       setPending({ from, to });
@@ -155,7 +162,7 @@ export function PracticeScreen() {
             fen={fen}
             marks={hint ? withHint(marks, drill) : marks}
             selected={selected}
-            onSelect={setSelected}
+            onSelect={selectSquare}
             onMove={onMove}
           />
           <PlayerLine
