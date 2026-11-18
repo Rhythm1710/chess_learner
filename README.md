@@ -36,6 +36,10 @@ npm start
 
 The production build serves a web app manifest, home-screen icons, and a small service worker. Add Chess Learner from the browser’s install menu.
 
+## Credits
+
+Rules come from [chess.js](https://github.com/jhlywa/chess.js), which is BSD-2-Clause. The piece artwork is the CBurnett Staunton set, public domain, recolored for this app.
+
 ## Type
 
 Instrument Sans is loaded as a variable font, so the theme tag can use the approved weight 550. No approved mobile style uses 650. IBM Plex Mono is loaded at 400, 500, and 600. Instrument Serif is 400.

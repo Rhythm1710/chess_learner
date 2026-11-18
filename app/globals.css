@@ -318,3 +318,221 @@ button, a {
   gap: 6px;
   flex: 0 0 auto;
 }
+
+.streak-card {
+  padding: 6px 10px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.streak-card .kicker { margin: 0; }
+
+.streak-num {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  letter-spacing: -0.03em;
+  color: var(--accent-2);
+  line-height: 1;
+}
+
+.today-num { font-size: 13px; font-weight: 600; color: var(--text); }
+
+.streak-rule {
+  width: 1px;
+  height: 22px;
+  background: var(--border);
+  align-self: center;
+}
+
+.board-card {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.player-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 348px;
+  font-size: 11px;
+  color: var(--text-2);
+}
+
+.player-line strong { color: var(--text); font-weight: 600; }
+
+.dot-w, .dot-b {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.dot-w { background: #EDEBE4; }
+.dot-b { background: #3A3A38; border: 1px solid #6E6C64; }
+
+.board {
+  display: grid;
+  user-select: none;
+  touch-action: none;
+}
+
+.board.md {
+  grid-template-columns: 12px repeat(8, 42px);
+  grid-template-rows: repeat(8, 42px) 12px;
+  width: 348px;
+}
+
+.board.md .sq { width: 42px; height: 42px; }
+
+.sq {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  position: relative;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+.sq.l { background: var(--sq-light); }
+.sq.d { background: var(--sq-dark); }
+
+.sq.hi::after,
+.sq.from::after,
+.sq.to-bad::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.sq.hi::after { background: var(--sq-hi); }
+.sq.from::after { background: var(--sq-from); }
+.sq.to-bad::after { background: var(--sq-to-bad); }
+
+.sq.selected { box-shadow: inset 0 0 0 2px var(--accent-2); }
+
+.sq.dot::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(16, 18, 16, 0.28);
+  position: absolute;
+  z-index: 2;
+}
+
+.sq.dot.capture::before {
+  width: 34px;
+  height: 34px;
+  background: transparent;
+  box-shadow: inset 0 0 0 3px rgba(16, 18, 16, 0.28);
+}
+
+.coord-r, .coord-f {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text-3);
+  display: grid;
+  place-items: center;
+}
+
+.piece {
+  width: 78%;
+  height: 78%;
+  display: block;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.drag-ghost {
+  position: fixed;
+  z-index: 40;
+  width: 42px;
+  height: 42px;
+  margin-left: -21px;
+  margin-top: -21px;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+  filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.35));
+}
+
+.feedback {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: var(--r-md);
+  background: var(--mistake-soft);
+  border: 1px solid rgba(227, 154, 74, 0.25);
+}
+
+.feedback.ok {
+  background: var(--good-soft);
+  border-color: rgba(107, 170, 122, 0.25);
+}
+
+.feedback .lbl {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+  color: var(--mistake);
+  margin-bottom: 4px;
+}
+
+.feedback.ok .lbl { color: var(--good); }
+
+.feedback p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.feedback .hint-line {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+.feedback .best {
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.actions .btn { flex: 1; height: 40px; padding: 0 10px; font-size: 12px; }
+.actions .btn.primary { flex: 1.15; }
+
+.promote {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.promote button {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.promote .piece { width: 70%; height: 70%; }
