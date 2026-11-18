@@ -653,3 +653,126 @@ button, a {
   color: var(--blunder);
   font-size: 12px;
 }
+
+.metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.metric { padding: 10px 12px; }
+
+.metric .lbl {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.metric .val {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  letter-spacing: -0.03em;
+  margin-top: 2px;
+  color: var(--text);
+}
+
+.metric .delta,
+.metric .hint {
+  font-size: 10px;
+  margin-top: 2px;
+}
+
+.metric .delta.up { color: var(--good); }
+.metric .delta.down { color: var(--blunder); }
+.metric .hint { color: var(--text-3); }
+
+.plan-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.plan-head .card-title { margin: 0; }
+.plan-count { font-size: 10px; color: var(--text-3); }
+
+.plan-item {
+  display: grid;
+  grid-template-columns: 18px 1fr auto;
+  gap: 10px;
+  align-items: start;
+  width: 100%;
+  margin: 0;
+  padding: 10px 0;
+  border: 0;
+  border-top: 1px solid var(--border-subtle);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.plan-item.first { border-top: 0; padding-top: 8px; }
+.plan-item h3 { margin: 0; font-size: 13px; font-weight: 600; }
+.plan-item p { margin: 2px 0 0; font-size: 11px; color: var(--text-2); }
+
+.plan-item .meta {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+.plan-item .bar { width: 120px; }
+
+.plan-item .pct {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-2);
+  padding-top: 2px;
+}
+
+.bar {
+  display: block;
+  height: 6px;
+  background: var(--surface-3);
+  border-radius: var(--r-pill);
+  overflow: hidden;
+}
+
+.bar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+}
+
+.check {
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  border-radius: 5px;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  color: #1A1610;
+  display: grid;
+  place-items: center;
+}
+
+.check.on {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.resume {
+  color: var(--text);
+  text-decoration: none;
+  font-size: 13px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
