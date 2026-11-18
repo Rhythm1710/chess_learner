@@ -40,7 +40,12 @@ export const DEFAULT_PROGRESS: StoredProgress = {
 };
 
 export function readProgress(store: KeyValueStore): StoredProgress {
-  const raw = store.getItem(PROGRESS_KEY);
+  let raw: string | null;
+  try {
+    raw = store.getItem(PROGRESS_KEY);
+  } catch {
+    return DEFAULT_PROGRESS;
+  }
   if (!raw) return DEFAULT_PROGRESS;
   try {
     const parsed = JSON.parse(raw) as Partial<StoredProgress>;
@@ -68,7 +73,11 @@ export function readProgress(store: KeyValueStore): StoredProgress {
 }
 
 export function writeProgress(store: KeyValueStore, progress: StoredProgress): void {
-  store.setItem(PROGRESS_KEY, JSON.stringify(progress));
+  try {
+    store.setItem(PROGRESS_KEY, JSON.stringify(progress));
+  } catch {
+    // Private mode and a full disk both reject storage. The screen still works.
+  }
 }
 
 function numberOr(value: unknown, fallback: number): number {

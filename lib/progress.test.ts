@@ -50,6 +50,19 @@ describe("local progress", () => {
     expect(loaded.analysis).toEqual({ pgn: "1. e4 e5", ply: 2 });
   });
 
+  it("does not throw when the browser blocks storage", () => {
+    const blocked: KeyValueStore = {
+      getItem() {
+        throw new Error("blocked");
+      },
+      setItem() {
+        throw new Error("full");
+      },
+    };
+    expect(readProgress(blocked)).toEqual(DEFAULT_PROGRESS);
+    expect(() => writeProgress(blocked, DEFAULT_PROGRESS)).not.toThrow();
+  });
+
   it("ignores a broken record and falls back to the example", () => {
     const store = memory();
     store.setItem(PROGRESS_KEY, "{not json");

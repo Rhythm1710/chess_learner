@@ -14,7 +14,11 @@ export function useProgress() {
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      setProgress(readProgress(window.localStorage));
+      try {
+        setProgress(readProgress(window.localStorage));
+      } catch {
+        setProgress(DEFAULT_PROGRESS);
+      }
       ready.current = true;
     }, 0);
     return () => window.clearTimeout(timer);
@@ -23,7 +27,13 @@ export function useProgress() {
   const write = useCallback((recipe: (current: StoredProgress) => StoredProgress) => {
     setProgress((current) => {
       const next = recipe(current);
-      if (ready.current) writeProgress(window.localStorage, next);
+      if (ready.current) {
+        try {
+          writeProgress(window.localStorage, next);
+        } catch {
+          // Keep the in-memory week if the browser refuses to store it.
+        }
+      }
       return next;
     });
   }, []);
