@@ -380,6 +380,9 @@ button, a {
 .board {
   display: grid;
   user-select: none;
+}
+
+.board.interactive {
   touch-action: none;
 }
 

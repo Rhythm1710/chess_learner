@@ -26,9 +26,7 @@ export function parsePgn(pgn: string): ParsedGame | null {
   }
   const moves = game.history({ verbose: true });
   const headers = game.getHeaders();
-  if (moves.length === 0) {
-    return { headers, sans: [], fens: [game.fen()] };
-  }
+  if (moves.length === 0) return null;
   return {
     headers,
     sans: moves.map((move) => move.san),

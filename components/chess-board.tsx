@@ -126,7 +126,11 @@ export function ChessBoard({
 
   return (
     <>
-      <div className={`board ${size}`} role="group" aria-label="Chess board">
+      <div
+        className={interactive ? `board ${size} interactive` : `board ${size}`}
+        role="group"
+        aria-label="Chess board"
+      >
         {Array.from({ length: 8 }, (_, row) => {
           const rank = 8 - row;
           const rowSquares = squares.slice(row * 8, row * 8 + 8);

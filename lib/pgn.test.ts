@@ -16,6 +16,15 @@ describe("PGN parsing", () => {
     expect(parsePgn("1. Ke9")).toBeNull();
   });
 
+  it("rejects a paste that is only headers or only a result", () => {
+    expect(parsePgn('[White "A"]\n[Black "B"]\n[Result "*"]\n')).toBeNull();
+    expect(parsePgn('[Event "Example"]\n[White "You"]\n[Black "Maya K."]\n')).toBeNull();
+    expect(parsePgn("1-0")).toBeNull();
+    expect(parsePgn("0-1")).toBeNull();
+    expect(parsePgn("1/2-1/2")).toBeNull();
+    expect(parsePgn("*")).toBeNull();
+  });
+
   it("keeps a fen before the line and after every move", () => {
     const game = parsePgn(EXAMPLE);
     expect(game?.headers.White).toBe("You");
