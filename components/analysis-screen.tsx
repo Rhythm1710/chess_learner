@@ -12,6 +12,11 @@ const DIAGRAM_FEN =
 
 const DIAGRAM_MARKS = { hi: ["e6"], from: "d3", toBad: "e2" };
 
+function playerName(value: string | undefined, fallback: string): string {
+  if (!value || value === "?") return fallback;
+  return value;
+}
+
 export const EXAMPLE_PGN = `[Event "Example"]
 [Site "chess.com"]
 [Date "2026.11.02"]
@@ -47,6 +52,8 @@ export function AnalysisScreen() {
   const san = onDiagram || ply === 0 ? null : game.sans[ply - 1];
   const scores = game ? materialScores(game.fens) : [];
   const moveLabel = onDiagram ? "25.Be2??" : san ?? "Start";
+  const whiteName = playerName(game?.headers.White, "White");
+  const blackName = playerName(game?.headers.Black, "Black");
 
   function load(source: string, startPly: number) {
     const parsed = parsePgn(source);
@@ -82,7 +89,13 @@ export function AnalysisScreen() {
           <div>
             <div className="kicker">Game analysis · chess.com import</div>
             <h1>
-              You vs Maya K. <span className="ex">(example)</span>
+              {onDiagram ? (
+                <>
+                  You vs Maya K. <span className="ex">(example)</span>
+                </>
+              ) : (
+                `${whiteName} vs ${blackName}`
+              )}
             </h1>
             <p className="sub">10 + 0 blitz · 2 Nov 2026 · White · example game</p>
           </div>
@@ -170,7 +183,13 @@ export function AnalysisScreen() {
             </p>
           </div>
           <div className="stepper">
-            <button className="btn" type="button" onClick={() => step(-1)} aria-label="Previous move">
+            <button
+              className="btn"
+              type="button"
+              onClick={() => step(-1)}
+              aria-label="Previous move"
+              disabled={onDiagram || ply === 0}
+            >
               Previous
             </button>
             <button className="btn" type="button" onClick={() => step(1)} aria-label="Next move">
